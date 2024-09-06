@@ -1,4 +1,5 @@
 package com.testing.api.utils;
+import com.github.javafaker.Faker;
 
 public final class Constants {
     public static final  String VALUE_CONTENT_TYPE       = "application/json";
@@ -9,6 +10,7 @@ public final class Constants {
     public static final  String URL                      = "/api/v1/%s";
     public static final  String URL_WITH_PARAM           = "/api/v1/%s/%s";
     public static final String RESOURCES_PATH            = "resources";
+    public static final Faker FAKER = new Faker();
 
     private Constants() {
     }

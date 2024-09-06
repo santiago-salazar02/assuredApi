@@ -1,7 +1,7 @@
 package com.testing.api.stepDefinitions;
 
-import com.github.javafaker.Faker;
 import com.testing.api.models.Client;
+import com.testing.api.utils.Constants;
 import com.testing.api.requests.ClientRequest;
 import io.cucumber.datatable.DataTable;
 import io.cucumber.java.en.Given;
@@ -24,7 +24,6 @@ public class ClientSteps {
     private Response response;
     private Client client;
     private String pastCellphone;
-    private final Faker faker = new Faker();
 
     // TC 1
 
@@ -37,7 +36,6 @@ public class ClientSteps {
             for(int i =0;i<10; i++){
                 clientDataMap = clientData.asMaps().get(i);
                 client = Client.builder()
-                        .id(clientDataMap.get("id"))
                         .name(clientDataMap.get("name"))
                         .lastName(clientDataMap.get("lastName"))
                         .country(clientDataMap.get("country"))
@@ -72,10 +70,12 @@ public class ClientSteps {
 
     @When("I update her phone number")
     public void iUpdateHerPhoneNumber(){
-        String phone = faker.phoneNumber().cellPhone();
+        String phone = Constants.FAKER.phoneNumber().cellPhone();
         client.setPhone(phone);
         response = clientRequest.updateClient(client,client.getId());
         logger.info("Phone updated:{}", phone);
+        logger.info(response.jsonPath()
+                .prettify());
     }
 
     @Then("I validate her new phone number is different")
@@ -91,8 +91,8 @@ public class ClientSteps {
         logger.info("Successfully validated the status code (200)");
     }
 
-    @Then("the response body schema should be correct")
-    public void theResponseBodySchemaShouldBeCorrect(){
+    @Then("the response client body schema should be correct")
+    public void theResponseClientBodySchemaShouldBeCorrect(){
         String path = "schemas/clientSchema.json";
         Assert.assertTrue(clientRequest.validateSchema(response, path));
         logger.info("Successfully Validated schema from Client object");
@@ -115,102 +115,53 @@ public class ClientSteps {
     // TC 3
 
 
-    /*
-
-    @Given("there are registered clients in the system")
-    public void thereAreRegisteredClientsInTheSystem() {
-        response = clientRequest.getClients();
-        logger.info(response.jsonPath()
-                            .prettify());
-        Assert.assertEquals(200, response.statusCode());
-
-        List<Client> clientList = clientRequest.getClientsEntity(response);
-        if (clientList.isEmpty()) {
-            response = clientRequest.createDefaultClient();
-            logger.info(response.statusCode());
-            Assert.assertEquals(201, response.statusCode());
-        }
-    }
-
-    @Given("I have a client with the following details:")
-    public void iHaveAClientWithTheFollowingDetails(DataTable clientData) {
-        Map<String, String> clientDataMap = clientData.asMaps()
-                                                      .get(0);
+    @Given("a new client is created:")
+    public void aNewClientIsCreated(DataTable clientData){
+        Map<String, String> clientDataMap = clientData.asMaps().get(0);
         client = Client.builder()
-                       .name(clientDataMap.get("Name"))
-                       .lastName(clientDataMap.get("LastName"))
-                       .country(clientDataMap.get("Country"))
-                       .city(clientDataMap.get("City"))
-                       .build();
-        logger.info("Client mapped: " + client);
-    }
-
-    @When("I retrieve the details of the client with ID {string}")
-    public void sendGETRequest(String clientId) {
-        response = clientRequest.getClient(clientId);
-        logger.info(response.jsonPath()
-                            .prettify());
-        logger.info("The status code is: " + response.statusCode());
-    }
-
-    @When("I send a GET request to view all the clients")
-    public void iSendAGETRequestToViewAllTheClient() {
-        response = clientRequest.getClients();
-    }
-
-    @When("I send a POST request to create a client")
-    public void iSendAPOSTRequestToCreateAClient() {
+                .name(clientDataMap.get("name"))
+                .lastName(clientDataMap.get("lastName"))
+                .country(clientDataMap.get("country"))
+                .city(clientDataMap.get("city"))
+                .email(clientDataMap.get("email"))
+                .phone(clientDataMap.get("phone"))
+                .build();
         response = clientRequest.createClient(client);
-    }
-
-    @When("I send a DELETE request to delete the client with ID {string}")
-    public void iSendADELETERequestToDeleteTheClientWithID(String clientId) {
-        response = clientRequest.deleteClient(clientId);
-    }
-
-    @When("I send a PUT request to update the client with ID {string}")
-    public void iSendAPUTRequestToUpdateTheClientWithID(String clientId, String requestBody) {
-        client = clientRequest.getClientEntity(requestBody);
-        response = clientRequest.updateClient(client, clientId);
-    }
-
-    @Then("the response should have a status code of {int}")
-    public void theResponseShouldHaveAStatusCodeOf(int statusCode) {
-        Assert.assertEquals(statusCode, response.statusCode());
-    }
-
-    @Then("the response should have the following details:")
-    public void theResponseShouldHaveTheFollowingDetails(DataTable expectedData) {
+        Assert.assertEquals(response.statusCode(),201);
         client = clientRequest.getClientEntity(response);
-        Map<String, String> expectedDataMap = expectedData.asMaps()
-                                                          .get(0);
-
-        Assert.assertEquals(expectedDataMap.get("Name"), client.getName());
-        Assert.assertEquals(expectedDataMap.get("LastName"), client.getLastName());
-        Assert.assertEquals(expectedDataMap.get("Country"), client.getCountry());
-        Assert.assertEquals(expectedDataMap.get("City"), client.getCity());
-        Assert.assertEquals(expectedDataMap.get("Id"), client.getId());
+        logger.info("New client created");
     }
 
-    @Then("the response should include the details of the created client")
-    public void theResponseShouldIncludeTheDetailsOfTheCreatedClient() {
-        Client new_client = clientRequest.getClientEntity(response);
-        new_client.setId(null);
-        Assert.assertEquals(client, new_client);
+    @When("I find the new client")
+    public void iFindTheNewClient(){
+        response = clientRequest.getClient(client.getId());
+        Assert.assertEquals(response.statusCode(),200);
+        logger.info("Client was found");
     }
 
-    @Then("validates the response with client JSON schema")
-    public void userValidatesResponseWithClientJSONSchema() {
-        String path = "schemas/clientSchema.json";
-        Assert.assertTrue(clientRequest.validateSchema(response, path));
-        logger.info("Successfully Validated schema from Client object");
+    @When("I update any parameter of the new client")
+    public void iUpdateAnyParameterOfTheNewClient(){
+        String phone = Constants.FAKER.phoneNumber().cellPhone();
+        client.setPhone(phone);
+        response = clientRequest.updateClient(client,client.getId());
+        logger.info("Client updated");
     }
 
-    @Then("validates the response with client list JSON schema")
-    public void userValidatesResponseWithClientListJSONSchema() {
-        String path = "schemas/clientListSchema.json";
-        Assert.assertTrue(clientRequest.validateSchema(response, path));
-        logger.info("Successfully Validated schema from Client List object");
+    @Then("the response body data should reflect the updated parameter")
+    public void theResponseBodyDataShouldReflectTheUpdatedParameter(){
+        String newPhone = this.client.getPhone();
+        response = clientRequest.getClient(client.getId());
+        Client client = clientRequest.getClientEntity(response);
+        Assert.assertEquals(newPhone,client.getPhone());
+        logger.info("Updated parameter reflected");
+        logger.info(response.jsonPath()
+                .prettify());
     }
-    */
+
+    @Then("I delete the created client")
+    public void iDeleteTheCreatedClient(){
+        response = clientRequest.deleteClient(client.getId());
+        Assert.assertEquals(200,response.statusCode());
+        logger.info("Client deleted");
+    }
 }
