@@ -3,7 +3,6 @@ package com.testing.api.requests;
 import com.google.gson.Gson;
 import com.testing.api.models.Resource;
 import com.testing.api.utils.Constants;
-import com.testing.api.utils.JsonFileReader;
 import io.restassured.module.jsv.JsonSchemaValidator;
 import io.restassured.path.json.JsonPath;
 import io.restassured.response.Response;
@@ -71,11 +70,6 @@ public class ResourceRequest extends BaseRequest {
     public List<Resource> getResourcesEntity(@NotNull Response response) {
         JsonPath jsonPath = response.jsonPath();
         return jsonPath.getList("", Resource.class);
-    }
-
-    public Response createDefaultResource() {
-        JsonFileReader jsonFile = new JsonFileReader();
-        return this.createResource(jsonFile.getResourceByJson(Constants.DEFAULT_CLIENT_FILE_PATH));
     }
 
     public Resource getResourceEntity(String resourceJson) {

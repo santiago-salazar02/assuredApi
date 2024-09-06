@@ -1,13 +1,13 @@
 {
   "type": "object",
   "properties": {
+    "id": {
+      "type": "string"
+    },
     "name": {
       "type": "string"
     },
     "lastName": {
-      "type": "string"
-    },
-    "gender": {
       "type": "string"
     },
     "country": {
@@ -16,16 +16,20 @@
     "city": {
       "type": "string"
     },
-    "id": {
+    "email": {
+      "type": "string"
+    },
+    "phone": {
       "type": "string"
     }
   },
   "required": [
+    "id",
     "name",
     "lastName",
-    "gender",
     "country",
     "city",
-    "id"
+    "email",
+    "phone"
   ]
 }

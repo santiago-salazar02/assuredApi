@@ -2,59 +2,23 @@
 Feature: Client testing CRUD
 
   @smoke
-  Scenario: Read details of an existing client
-    Given there are registered clients in the system
-    When I retrieve the details of the client with ID "1"
-    Then the response should have a status code of 200
-    And the response should have the following details:
-      | Name   | LastName | Gender | Country  | City   | Id |
-      | Manuel | Munoz    | Man    | Colombia | Bogota | 1  |
-    And validates the response with client JSON schema
-
-  @smoke
-  Scenario: Create a new client
-    Given I have a client with the following details:
-      | Name | LastName | Gender | Country | City     |
-      | John | Doe      | Male   | USA     | New York |
-    When I send a POST request to create a client
-    Then the response should have a status code of 201
-    And the response should include the details of the created client
-    And validates the response with client JSON schema
-
-  @smoke @regression
-  Scenario: View all the clients
-    Given there are registered clients in the system
-    When I send a GET request to view all the clients
-    Then the response should have a status code of 200
-    And validates the response with client list JSON schema
-
-  @smoke
-  Scenario: Update client details
-    Given there are registered clients in the system
-    And I retrieve the details of the client with ID "1"
-    When I send a PUT request to update the client with ID "1"
-    """
-    {
-      "name": "Maria",
-      "lastName": "Gomez",
-      "gender": "Female",
-      "country": "Spain",
-      "city": "Barcelona"
-    }
-    """
-    Then the response should have a status code of 200
-    And the response should have the following details:
-      | Name  | LastName | Gender | Country | City      | Id |
-      | Maria | Gomez    | Female | Spain   | Barcelona | 1  |
-    And validates the response with client JSON schema
-
-  @smoke @regression
-  Scenario: Delete an existing client
-    Given there are registered clients in the system
-    When I send a DELETE request to delete the client with ID "1"
-    Then the response should have a status code of 200
-    And the response should have the following details:
-      | Name  | LastName | Gender | Country | City      | Id |
-      | Maria | Gomez    | Female | Spain   | Barcelona | 1  |
-    And validates the response with client JSON schema
-
+  Scenario: Change the phone number of the first Client named Laura
+    Given there are at least ten registered clients:
+      | name   | lastName | country  | city       | email                   | phone        | id  |
+      |--------|----------|----------|------------|-------------------------|--------------|-----|
+      | Laura  | Munoz    | Colombia | Bogota     | lauramunoz@gmail.com    | 3229993210   | 100000000   |
+      | John   | Doe      | USA      | New York   | johndoe@example.com     | 5551234567   | 200000000   |
+      | Maria  | Lopez    | Spain    | Madrid     | marialopez@example.com  | 611223344    | 300000000   |
+      | Ahmed  | Khan     | Pakistan | Karachi    | ahmedkhan@example.com   | 03001234567  | 400000000   |
+      | Yuki   | Tanaka   | Japan    | Tokyo      | yukitanaka@example.com  | 08012345678  | 500000000   |
+      | Priya  | Sharma   | India    | Mumbai     | priyasharma@example.com | 9876543210   | 600000000   |
+      | Hans   | Müller   | Germany  | Berlin     | hansmuller@example.com  | 01761234567  | 700000000   |
+      | Li     | Wei      | China    | Beijing    | liwei@example.com       | 13800138000  | 800000000   |
+      | Anna   | Ivanova  | Russia   | Moscow     | annaivanova@example.com | 89161234567  | 900000000   |
+      | Carlos | Gomez    | Mexico   | Mexico City| carlosgomez@example.com | 5512345678   | 1000000000  |
+    And I find the first client named Laura
+    When I update her phone number
+    Then I validate her new phone number is different
+    And the response should have an HTTP status code of 200
+    And the response body schema should be correct
+    And I delete all the registered clients
