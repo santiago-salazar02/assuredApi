@@ -9,12 +9,14 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class Client {
+public class Resource {
     private String id;
     private String name;
-    private String lastName;
-    private String country;
-    private String city;
-    private String email;
-    private String phone;
+    private String trademark;
+    private long stock;
+    private double price;
+    private String description;
+    private String tags;
+    private boolean active;
 }
+

@@ -22,6 +22,10 @@ public class ClientSteps {
     private Response response;
     private Client   client;
 
+    @Given("there are at least 10 registered clients")
+    public void thereAreAtLeast10RegisteredClients(){
+    }
+
     @Given("there are registered clients in the system")
     public void thereAreRegisteredClientsInTheSystem() {
         response = clientRequest.getClients();
@@ -44,7 +48,6 @@ public class ClientSteps {
         client = Client.builder()
                        .name(clientDataMap.get("Name"))
                        .lastName(clientDataMap.get("LastName"))
-                       .gender(clientDataMap.get("Gender"))
                        .country(clientDataMap.get("Country"))
                        .city(clientDataMap.get("City"))
                        .build();
@@ -93,7 +96,6 @@ public class ClientSteps {
 
         Assert.assertEquals(expectedDataMap.get("Name"), client.getName());
         Assert.assertEquals(expectedDataMap.get("LastName"), client.getLastName());
-        Assert.assertEquals(expectedDataMap.get("Gender"), client.getGender());
         Assert.assertEquals(expectedDataMap.get("Country"), client.getCountry());
         Assert.assertEquals(expectedDataMap.get("City"), client.getCity());
         Assert.assertEquals(expectedDataMap.get("Id"), client.getId());
