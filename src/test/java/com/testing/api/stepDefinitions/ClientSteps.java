@@ -10,6 +10,7 @@ import io.cucumber.java.en.When;
 import io.restassured.response.Response;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.jetbrains.annotations.NotNull;
 import org.junit.Assert;
 
 import java.util.List;
@@ -27,13 +28,21 @@ public class ClientSteps {
 
     // TC 1
 
-    @Given("there are at least ten registered clients:")
-    public void thereAreAtLeastTenRegisteredClients(DataTable clientData){
+    @Given("there are at least {int} registered clients:")
+    public void thereAreAtLeastTenRegisteredClients(int quantityClients,DataTable clientData){
         response = clientRequest.getClients();
+
+        String path = "schemas/clientListSchema.json";
+        Assert.assertTrue(clientRequest.validateSchema(response, path));
+        logger.info("Successfully Validated schema from Client object");
+
+        // Create until 10 clients inside api
         List<Client> clientList = clientRequest.getClientsEntity(response);
-        if(clientList.size() < 10){
+        quantityClients -= clientList.size();
+
             Map<String, String> clientDataMap;
-            for(int i =0;i<10; i++){
+
+            for(int i =0;i < quantityClients; i++){
                 clientDataMap = clientData.asMaps().get(i);
                 client = Client.builder()
                         .name(clientDataMap.get("name"))
@@ -43,12 +52,12 @@ public class ClientSteps {
                         .email(clientDataMap.get("email"))
                         .phone(clientDataMap.get("phone"))
                         .build();
+
                 response = clientRequest.createClient(client);
                 Assert.assertEquals(response.statusCode(),201);
-                logger.info("New client created");
+                logger.info("New clients created");
             }
-            logger.info("Creating 10 previous clients");
-        }
+            
         logger.info("10 clients or more inside the server");
     }
 
@@ -66,6 +75,7 @@ public class ClientSteps {
             }
         }
         Assert.assertTrue(isLauraInside);
+        logger.info("Laura is inside");
     }
 
     @When("I update her phone number")
@@ -116,7 +126,7 @@ public class ClientSteps {
 
 
     @Given("a new client is created:")
-    public void aNewClientIsCreated(DataTable clientData){
+    public void aNewClientIsCreated(@NotNull DataTable clientData){
         Map<String, String> clientDataMap = clientData.asMaps().get(0);
         client = Client.builder()
                 .name(clientDataMap.get("name"))

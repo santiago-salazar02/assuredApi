@@ -8,29 +8,34 @@
       "name": {
         "type": "string"
       },
-      "lastName": {
+      "trademark": {
         "type": "string"
       },
-      "country": {
+      "stock": {
+        "type": "number"
+      },
+      "price": {
+        "type": "number"
+      },
+      "description": {
         "type": "string"
       },
-      "city": {
+      "tags": {
         "type": "string"
       },
-      "email": {
-        "type": "string"
-      },
-      "phone": {
-        "type": "string"
+      "active": {
+        "type": "boolean"
       }
     },
     "required": [
+      "id",
       "name",
-      "lastName",
-      "country",
-      "city",
-      "email",
-      "phone"
+      "trademark",
+      "stock",
+      "price",
+      "description",
+      "tags",
+      "active"
     ]
   }
 }

@@ -44,6 +44,16 @@ public class ClientRequest extends BaseRequest {
     }
 
     /**
+     * Create client
+     * @param client model
+     * @return rest-assured response
+     */
+    public Response createClients(List<Client> client) {
+        endpoint = String.format(Constants.URL, Constants.CLIENTS_PATH);
+        return requestPost(endpoint, createBaseHeaders(), client);
+    }
+
+    /**
      * Update client by id
      * @param client model
      * @param clientId string

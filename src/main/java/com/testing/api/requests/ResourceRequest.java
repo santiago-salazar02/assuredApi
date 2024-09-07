@@ -43,6 +43,17 @@ public class ResourceRequest extends BaseRequest {
     }
 
     /**
+     * Create resource
+     * @param resource model
+     * @return rest-assured response
+     */
+    public Response createResources(List<Resource> resource) {
+        endpoint = String.format(Constants.URL, Constants.RESOURCES_PATH);
+        return requestPost(endpoint, createBaseHeaders(), resource);
+    }
+
+
+    /**
      * Update resource by id
      * @param resource model
      * @param resourceId string
